@@ -13,12 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * RelationshipController类
- *
- * @author 汪明杰
- * @date 2021/11/30 13:26
- */
 @RestController
 @RequestMapping("/neo4j/relation")
 public class RelationshipController {
@@ -28,23 +22,27 @@ public class RelationshipController {
         this.driver = driver;
     }
 
+    // 获取导演总共导演的电影数量
     @GetMapping(path = "/actorAndDirector",produces =  MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> findMostCooperateActorAndDirector(){
         try (Session session = driver.session()) {
             // 记录开始时间
             long startTime = System.currentTimeMillis();
             Result res=
-                    session.run("Match (p:Person)-[r:MainAct|Act]->(m:Movie)<-[a:Direct]-(q:Person) " +
-                            "where id(p)<> id(q) return p.name,q.name,count(m) order by count(m) desc limit 1");
+                    session.run("MATCH (p:Person {name: 'George Miller'})-[:direct]->(m:Movie)"
+                    +"RETURN p.name AS actor, COUNT(m) AS moviesDirected; "
+                    );
+            System.out.println("The response is : "+res);
+
 
             // 记录结束时间
             long endTime = System.currentTimeMillis();
 
             List<Record> relation = res.list();
             HashMap<String,Object> response = new HashMap<>();
-            response.put("actor",relation.get(0).get(0).asString());
-            response.put("director",relation.get(0).get(1).asString());
-            response.put("number",relation.get(0).get(2).toString());
+
+            response.put("actor",relation.get(0).get(0).toString());
+            response.put("number",relation.get(0).get(1).toString());
             response.put("time",endTime-startTime);
 
             return response;
@@ -56,8 +54,7 @@ public class RelationshipController {
         try (Session session = driver.session()) {
             // 记录开始时间
             long startTime = System.currentTimeMillis();
-            Result res=
-                    session.run("Match (p:Person)-[r:MainAct|Act]->(m:Movie)<-[a:MainAct|Act]-(q:Person) " +
+            Result res = session.run("Match (p:Person)-[r:MainAct|Act]->(m:Movie)<-[a:MainAct|Act]-(q:Person) " +
                             "where id(p)<> id(q) return p.name,q.name,count(m) order by count(m) desc limit 1");
 
             // 记录结束时间

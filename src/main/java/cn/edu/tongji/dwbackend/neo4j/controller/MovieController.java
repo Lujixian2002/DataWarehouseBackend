@@ -33,11 +33,6 @@ public class MovieController {
 
     @RequestMapping(method = RequestMethod.POST)
     public HashMap<String,Object> getMovieByCondition(@RequestBody  MovieInfoDto movieInfo) {
-
-        // match (m:Movie), (m)-[:Belong]->(c:Category{name:'DTS'}) where m.title = 'Book and Sword' return count(m)
-        // where m.year*10000+m.month*100+m.day >=20101102
-        // 导演：match (m:Movie), (m)<-[:MainAct]-(:Person{name:'Santana'}),(m)<-[:MainAct]-(:Person{name:'Treglia'})
-        // 评分用 where
         try (Session session = driver.session()) {
             String query = "match (m:Movie) ";
             if (movieInfo.getCategory() != null){

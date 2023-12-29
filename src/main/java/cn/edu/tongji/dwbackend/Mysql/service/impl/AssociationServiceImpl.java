@@ -267,44 +267,6 @@ public class AssociationServiceImpl implements AssociationService {
     @Override
     public HashMap<String, Object> getMovieResultsByMutipleRules(MovieInfoDto movieInfoDto) {
         HashMap<String,Object> result = new HashMap<>();
-//        Specification<ViewMovieFactEntity> spec = (root, query, criteriaBuilder) -> {
-//            ArrayList<Predicate> list = new ArrayList<>();
-//            if(movieInfoDto.getMovieName() != null)//加入电影名称谓词
-//                list.add(criteriaBuilder.equal(root.get("movieName"),movieInfoDto.getMovieName()));
-//            if(movieInfoDto.getCategory()!= null)//加入电影类别谓词
-//                list.add(criteriaBuilder.equal(root.get("categoryName"),movieInfoDto.getCategory()));
-//            if(movieInfoDto.getDirectorNames() != null){
-//                for(String directorName:movieInfoDto.getDirectorNames()){
-//                    list.add(criteriaBuilder.equal(root.get("directorName"),directorName));
-//                }
-//            }
-//            if(movieInfoDto.getMainActors() != null){
-//                for(String mainActor:movieInfoDto.getMainActors()){
-//                    list.add(criteriaBuilder.equal(root.get("isMainActor"),1));
-//                    list.add(criteriaBuilder.equal(root.get("actorName"),mainActor));
-//                }
-//            }
-//            if(movieInfoDto.getMinScore() != null)
-//                list.add(criteriaBuilder.ge(root.get("movieScore"),Double.valueOf(movieInfoDto.getMinScore())));
-//            if(movieInfoDto.getMaxScore() != null)
-//                list.add(criteriaBuilder.le(root.get("movieScore"),Double.valueOf(movieInfoDto.getMaxScore())));
-//            if(movieInfoDto.getMinYear() != null)
-//                list.add(criteriaBuilder.ge(root.get("year"),movieInfoDto.getMinYear().shortValue()));
-//            if(movieInfoDto.getMaxYear() != null)
-//                list.add(criteriaBuilder.le(root.get("year"),movieInfoDto.getMaxYear().shortValue()));
-//            if(movieInfoDto.getMinMonth() != null)
-//                list.add(criteriaBuilder.ge(root.get("month"),movieInfoDto.getMinMonth().shortValue()));
-//            if(movieInfoDto.getMaxMonth() != null)
-//                list.add(criteriaBuilder.le(root.get("month"),movieInfoDto.getMaxMonth().shortValue()));
-//            if(movieInfoDto.getMinDay() != null)
-//                list.add(criteriaBuilder.le(root.get("day"),movieInfoDto.getMinDay().shortValue()));
-//
-//            Predicate[] array = new Predicate[list.size()];
-//            Predicate[] predicates = list.toArray(array);
-//            return criteriaBuilder.or(predicates);
-//        };
-//        List<ViewMovieFactEntity> viewMovieFactEntities = viewModelFactRepository.findAll(spec);
-//        result.put("result",viewMovieFactEntities);
 
         //电影名称查询
         long startTime = System.currentTimeMillis();
@@ -553,12 +515,6 @@ public class AssociationServiceImpl implements AssociationService {
                 movieNode.put("day", calendar.get(Calendar.DATE));
             }
 
-//            TimeEntity timeEntity = timeRepository.findByTimeId(movieEntity.getTimeId());
-//            if(timeEntity != null) {
-//                movieNode.put("year", timeEntity.getYear());
-//                movieNode.put("month", timeEntity.getMonth());
-//                movieNode.put("day", timeEntity.getDay());
-//            }
             movieResult.add(movieNode);
             if(resultNum == 50){
                 break;
