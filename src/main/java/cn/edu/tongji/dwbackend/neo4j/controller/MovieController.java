@@ -1,12 +1,10 @@
 package cn.edu.tongji.dwbackend.neo4j.controller;
 
 import cn.edu.tongji.dwbackend.dto.MovieInfoDto;
-import cn.edu.tongji.dwbackend.neo4j.reponse.MovieResponse;
-import org.neo4j.driver.Driver;
+import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
 import org.neo4j.driver.internal.value.NullValue;
+import org.neo4j.driver.types.Node;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +25,9 @@ import java.util.Map;
 public class MovieController {
     private final Driver driver;
 
-    public MovieController(Driver driver){
-        this.driver = driver;
+    public MovieController() {
+        driver = GraphDatabase.driver("bolt://121.199.164.213:7687",
+                AuthTokens.basic("neo4j", "datawarehouse"));
     }
 
     /**
@@ -43,24 +42,41 @@ public class MovieController {
             long startTime = System.currentTimeMillis();
             Result res= session.run(
                     "MATCH (m:Movie)-[]->(s:Style {style: '"+type+"'})\n" +
-                            "RETURN COUNT(m) AS movieCount, COLLECT(m) AS movies;\n"
+                        "RETURN COUNT(m), COLLECT(m);\n"
             );
             // 记录结束时间
             long endTime = System.currentTimeMillis();
-            System.out.println("Response is : "+res);
-            //int movieCount=res.list().get(0);
-            //// 处理查询结果
-            //Record record = res.single();
-            //List<String> movies = res.list().get(0);
 
+            HashMap<String,Object> response = new HashMap<>();
+            // 存储结束时间
+            response.put("time",endTime-startTime);
 
+            List<org.neo4j.driver.Record> records =res.list();
+            // 数据存储与返回
+            System.out.println("Response is : "+records);
 
-            // 创建 MovieResponse 对象并返回
-            //MovieResponse response = new MovieResponse();
-            //response.setTime(endTime - startTime);
-            //response.setMovieCount(movieCount);
-            //response.setMovies(movies);
-            return null;
+            for (org.neo4j.driver.Record record : records) {
+                // 提取 COUNT(m) 和 COLLECT(m) 的值
+                Long count = record.get("COUNT(m)").asLong();
+                System.out.println(count);
+                response.put("count",count);
+
+                // 获取 COLLECT(m) 的列表
+                List<Node> nodeList = record.get("COLLECT(m)").asList(Value::asNode);
+                List<String> nameList=new ArrayList<>();
+                // 超过100条仅仅显示前100条
+                if(count>100){
+                    nodeList= nodeList.subList(0,100);
+                }
+                // 处理每个 Node 的值
+                for (Node node : nodeList) {
+                    System.out.println("Node Name is"+node.asMap().get("title"));
+                    String nodeName = node.asMap().get("title").toString(); //  Node 有一个名为 "name" 的属性
+                    nameList.add(nodeName);
+                }
+                response.put("Nodes:",nameList);
+            }
+            return response;
         }
     }
 
@@ -152,17 +168,6 @@ public class MovieController {
                         (10000*movieInfo.getMaxYear()+100*movieInfo.getMaxMonth()+movieInfo.getMaxDay())+" ";
             }
 
-            if(movieInfo.getPositive()!=null){
-                if (whereAppear){
-                    query+= " and ";
-                }
-                else {
-                    query += " where ";
-                    whereAppear = true;
-                }
-                query+=" m.positive>= "+
-                        String.valueOf(movieInfo.getPositive() * 1.0 / 100)+" ";
-            }
 
             query+=" return m ";
             System.out.println("查询语句为: "+query);
@@ -231,32 +236,8 @@ public class MovieController {
         }
     }
 
-    /*
-    @GetMapping(path = "/name", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String, Object> findMovieByName(@RequestParam String name){
-        try (Session session = driver.session()) {
-            // 记录开始时间
-            long startTime = System.currentTimeMillis();
-            Result res=
-                    session.run("match (n:Movie) where n.name contains('"+name+"') return n");
-
-            // 记录结束时间
-            long endTime = System.currentTimeMillis();
-
-
-            HashMap<String,Object> response = new HashMap<>();
-            response.put("movies",res
-                    .list(r -> r.get("m").asNode().get("address").asString()));
-            response.put("time",endTime-startTime);
-
-            return response;
-        }
-    }
-    */
-
     @GetMapping(path = "/director",produces =  MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> findMovieByDirectorName(@RequestParam String name){
-        //
         try (Session session = driver.session()) {
             // 记录开始时间
             long startTime = System.currentTimeMillis();

@@ -5,9 +5,10 @@ import java.util.List;
 /**
  * TODO:此处写MovieInfoDto类的描述
  *
- * @author 汪明杰
- * @date 2021/12/7 22:40
+ * @author shotray
+ * @since 2021/12/19 2:14
  */
+
 public class MovieInfoDto {
     private String movieName;
     private String category;
@@ -22,7 +23,6 @@ public class MovieInfoDto {
     private Integer maxYear;
     private Integer maxMonth;
     private Integer maxDay;
-    private Integer positive;
 
     public String getMovieName() {
         return movieName;
@@ -126,13 +126,5 @@ public class MovieInfoDto {
 
     public void setMaxDay(Integer maxDay) {
         this.maxDay = maxDay;
-    }
-
-    public Integer getPositive() {
-        return positive;
-    }
-
-    public void setPositive(Integer positive) {
-        this.positive = positive;
     }
 }
