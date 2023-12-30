@@ -1,6 +1,7 @@
 package cn.edu.tongji.dwbackend.neo4j.controller;
 
 import cn.edu.tongji.dwbackend.dto.MovieInfoDto;
+import cn.edu.tongji.dwbackend.neo4j.reponse.MovieResponse;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
@@ -16,11 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * MovieController类
- *
- * @author 汪明杰
- * @date 2021/11/28 15:52
+ * 此处实现的查询如下：
+ *      1. 按照电影类别进行查询
  */
+
 
 @RestController
 @RequestMapping("/neo4j/movie")
@@ -30,6 +30,42 @@ public class MovieController {
     public MovieController(Driver driver){
         this.driver = driver;
     }
+
+    /**
+     * 根据电影类别进行查询
+     * @param type
+     * @return
+     */
+    @GetMapping(path = "/type", produces = MediaType.APPLICATION_JSON_VALUE)
+    public HashMap<String, Object> findMovieByType(@RequestParam String type){
+        try (Session session = driver.session()) {
+            // 记录开始时间
+            long startTime = System.currentTimeMillis();
+            Result res= session.run(
+                    "MATCH (m:Movie)-[]->(s:Style {style: '"+type+"'})\n" +
+                            "RETURN COUNT(m) AS movieCount, COLLECT(m) AS movies;\n"
+            );
+            // 记录结束时间
+            long endTime = System.currentTimeMillis();
+            System.out.println("Response is : "+res);
+            //int movieCount=res.list().get(0);
+            //// 处理查询结果
+            //Record record = res.single();
+            //List<String> movies = res.list().get(0);
+
+
+
+            // 创建 MovieResponse 对象并返回
+            //MovieResponse response = new MovieResponse();
+            //response.setTime(endTime - startTime);
+            //response.setMovieCount(movieCount);
+            //response.setMovies(movies);
+            return null;
+        }
+    }
+
+
+
 
     @RequestMapping(method = RequestMethod.POST)
     public HashMap<String,Object> getMovieByCondition(@RequestBody  MovieInfoDto movieInfo) {
@@ -195,6 +231,7 @@ public class MovieController {
         }
     }
 
+    /*
     @GetMapping(path = "/name", produces = MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> findMovieByName(@RequestParam String name){
         try (Session session = driver.session()) {
@@ -215,6 +252,7 @@ public class MovieController {
             return response;
         }
     }
+    */
 
     @GetMapping(path = "/director",produces =  MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> findMovieByDirectorName(@RequestParam String name){

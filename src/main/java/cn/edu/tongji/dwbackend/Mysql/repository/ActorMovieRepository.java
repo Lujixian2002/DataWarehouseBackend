@@ -13,9 +13,8 @@ extends JpaRepository<ActorMovieEntity, ActorMovieEntityPK> ,
         JpaSpecificationExecutor<ActorMovieEntity> {
     List<ActorMovieEntity> findAllByMovieIdAndIsMainActor(int movieId, byte isMainActor);
     List<ActorMovieEntity> findAllByActorNameAndIsMainActor(String actorName, byte isMainActor);
- 
         
-        }
+}
 
 
 

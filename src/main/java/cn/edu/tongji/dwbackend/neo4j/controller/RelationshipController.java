@@ -13,6 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * 此处负责如下查询：
+ *      1. 查询经常合作的演员
+ *      2. 查询经常合作的演员和导演
+ */
 @RestController
 @RequestMapping("/neo4j/relation")
 public class RelationshipController {
@@ -22,7 +28,7 @@ public class RelationshipController {
         this.driver = driver;
     }
 
-    // 获取导演总共导演的电影数量
+    // 经常合作演员和导演
     @GetMapping(path = "/actorAndDirector",produces =  MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> findMostCooperateActorAndDirector(){
         try (Session session = driver.session()) {
