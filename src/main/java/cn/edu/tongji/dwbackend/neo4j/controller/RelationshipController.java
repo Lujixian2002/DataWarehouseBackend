@@ -52,10 +52,6 @@ public class RelationshipController {
             // 记录结束时间
             long endTime = System.currentTimeMillis();
 
-            HashMap<String,Object> response = new HashMap<>();
-            // 存储结束时间
-            response.put("time",endTime-startTime);
-
             List<org.neo4j.driver.Record> records =res.list();
             // 数据存储与返回
             System.out.println("Response is : "+records);
@@ -72,6 +68,8 @@ public class RelationshipController {
                 cooperationResponse.setName1(record.get("p1").asMap().get("name").toString());
                 cooperationResponse.setName2(record.get("p2").asMap().get("name").toString());
                 cooperationResponses.add(cooperationResponse);
+
+                cooperationResponse.setQueryTime(endTime-startTime);
             }
 
             return cooperationResponses;
@@ -96,9 +94,6 @@ public class RelationshipController {
             // 记录结束时间
             long endTime = System.currentTimeMillis();
 
-            HashMap<String,Object> response = new HashMap<>();
-            // 存储结束时间
-            response.put("time",endTime-startTime);
 
             List<org.neo4j.driver.Record> records =res.list();
             // 数据存储与返回
@@ -116,6 +111,8 @@ public class RelationshipController {
                 cooperationResponse.setName1(record.get("p1").asMap().get("name").toString());
                 cooperationResponse.setName2(record.get("p2").asMap().get("name").toString());
                 cooperationResponses.add(cooperationResponse);
+
+                cooperationResponse.setQueryTime(endTime-startTime);
             }
 
             return cooperationResponses;

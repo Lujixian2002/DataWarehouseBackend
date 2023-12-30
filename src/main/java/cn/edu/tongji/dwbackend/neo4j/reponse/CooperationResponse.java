@@ -4,6 +4,16 @@ public class CooperationResponse {
     int times;
     String Name1;
     String Name2;
+    long queryTime;
+
+
+    public long getQueryTime() {
+        return queryTime;
+    }
+
+    public void setQueryTime(long queryTime) {
+        this.queryTime = queryTime;
+    }
 
     public int getTimes() {
         return times;
